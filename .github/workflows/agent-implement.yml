@@ -143,35 +143,52 @@ jobs:
           N: ${{ github.event.issue.number || inputs.issue_number }}
         run: |
           set -euo pipefail
-          {
-            printf 'Implement GitHub issue #%s in this repository.\n\n' "$N"
-            printf 'Read repository conventions and documentation before modifying code.\n\n'
-            printf 'The issue to implement:\n\n'
-            gh issue view "$N" --json title,body,comments --jq '"## " + .title + "\n\n" + .body + (if (.comments | length) > 0 then "\n\n## Maintainer Guidance:\n\n" + ([.comments[].body] | join("\n\n---\n\n")) else "" end)'
-            printf '\n\nRules:\n'
-            printf '%s\n' '- You are already on the branch for this work. Do not create or switch branches.'
-            printf '%s\n' '- Do NOT push, do NOT open a PR, do NOT touch GitHub in any way.'
-            printf '%s\n' '- Do NOT modify or create any files in .github/.'
-            printf '%s\n' '- Make the smallest clean change that satisfies the acceptance criteria.'
-            printf '%s\n' '- Run the test, typecheck, and build commands; they must all pass.'
-            printf 'Part of #%s: ...\n' "$N" | sed 's/^/- Commit your work in small commits with messages like "/; s/$/"./'
-            printf '%s\n' '- If you are genuinely blocked, stop and leave a note in .factory-blocked.txt explaining why.'
-            printf '\nBefore you finish, write the pull request description to /tmp/factory-pr-body.md.\n'
-            printf 'If your tools cannot write outside the repository, write `.factory-pr-body.md` in the repository root instead.\n'
-            printf 'It becomes the body of the draft PR. Follow the /pr standards strictly: brief prose, no preambles, domain vocabulary.\n\n'
-            printf 'Use exactly these headings and structure:\n\n'
-            printf '## Summary\n\n'
-            printf 'Pick the smallest visual view that makes the key change clear: a diagram, diff-sketch, call tree, component tree, or shallow file tree. Include 1-2 concise sentences alongside the visual.\n\n'
-            printf '## Evidence\n\n'
-            printf '- **Before:** <screenshot/output/failing test run or baseline>\n'
-            printf '  **After:** <screenshot/output/passing test run or verified command output>\n\n'
-            printf '## Merge Danger\n\n'
-            printf '**Door:** <one-way or two-way>\n\n'
-            printf '<description of reversibility>\n\n'
-            printf '**Blast Radius:** <one-word or concise description>\n\n'
-            printf '<potential ramifications of merge>\n\n'
-            printf 'Rules: no title line; do not write "Closes/Fixes/Resolves #N"; keep it concise and under 4000 characters; write only what you verified.\n'
-          } > /tmp/factory-prompt.txt
+          ISSUE_CONTENT=$(gh issue view "$N" --json title,body,comments --jq '"## " + .title + "\n\n" + .body + (if (.comments | length) > 0 then "\n\n## Maintainer Guidance:\n\n" + ([.comments[].body] | join("\n\n---\n\n")) else "" end)')
+          cat << PROMPT_EOF > /tmp/factory-prompt.txt
+Implement GitHub issue #${N} in this repository.
+
+Read repository conventions and documentation before modifying code.
+
+The issue to implement:
+
+${ISSUE_CONTENT}
+
+Rules:
+- You are already on the branch for this work. Do not create or switch branches.
+- Do NOT push, do NOT open a PR, do NOT touch GitHub in any way.
+- Do NOT modify or create any files in .github/.
+- Make the smallest clean change that satisfies the acceptance criteria.
+- Run the test, typecheck, and build commands; they must all pass.
+- Commit your work in small commits with messages like "Part of #${N}: ...".
+- If you are genuinely blocked, stop and leave a note in .factory-blocked.txt explaining why.
+
+Before you finish, write the pull request description to /tmp/factory-pr-body.md.
+If your tools cannot write outside the repository, write \`.factory-pr-body.md\` in the repository root instead.
+It becomes the body of the draft PR. Follow the /pr standards strictly: brief prose, no preambles, domain vocabulary.
+
+Use exactly these headings and structure:
+
+## Summary
+
+Pick the smallest visual view that makes the key change clear: a diagram, diff-sketch, call tree, component tree, or shallow file tree. Include 1-2 concise sentences alongside the visual.
+
+## Evidence
+
+- **Before:** <screenshot/output/failing test run or baseline>
+  **After:** <screenshot/output/passing test run or verified command output>
+
+## Merge Danger
+
+**Door:** <one-way or two-way>
+
+<description of reversibility>
+
+**Blast Radius:** <one-word or concise description>
+
+<potential ramifications of merge>
+
+Rules: no title line; do not write "Closes/Fixes/Resolves #N"; keep it concise and under 4000 characters; write only what you verified.
+PROMPT_EOF
 
       - name: Run agent (tokenless cleanroom)
         if: steps.preflight.outputs.accepted == 'true'
