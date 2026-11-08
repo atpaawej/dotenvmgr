@@ -4,17 +4,30 @@
 
 :root {
   color-scheme: dark;
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+}
+
+html {
+  background-color: #08090a;
 }
 
 body {
+  min-height: 100vh;
+  background-color: #08090a;
   background-image:
-    radial-gradient(circle at 50% -10%, rgba(255, 255, 255, 0.08), transparent 42%),
-    linear-gradient(rgba(255, 255, 255, 0.025) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.025) 1px, transparent 1px);
-  background-position: center top, center top, center top;
-  background-size: auto, 48px 48px, 48px 48px;
+    radial-gradient(ellipse 70% 50% at 50% -10%, rgba(255, 255, 255, 0.055), transparent 65%),
+    radial-gradient(circle at 1px 1px, rgba(255, 255, 255, 0.035) 1px, transparent 0);
+  background-attachment: fixed;
+  background-size: auto, 32px 32px;
 }
 
 ::selection {
   background: rgba(255, 255, 255, 0.18);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
 }
