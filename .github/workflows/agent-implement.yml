@@ -116,12 +116,14 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 22
-          cache: npm
 
       - name: Install dependencies
         if: steps.preflight.outputs.accepted == 'true'
         run: |
-          if [ -f package-lock.json ]; then
+          corepack enable || true
+          if [ -f pnpm-lock.yaml ]; then
+            pnpm install --frozen-lockfile
+          elif [ -f package-lock.json ]; then
             npm ci
           elif [ -f package.json ]; then
             npm install
