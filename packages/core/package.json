@@ -1,0 +1,26 @@
+{
+  "name": "@dotenvmgr/core",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "drizzle-orm": "^0.45.4",
+    "sql.js": "^1.15.2"
+  },
+  "devDependencies": {
+    "@types/sql.js": "^1.4.11"
+  }
+}
