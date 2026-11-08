@@ -1,5 +1,9 @@
 node_modules/
 dist/
+.next/
 *.tsbuildinfo
+.env
+.env.*
+!.env.example
 .factory-blocked.txt
 .factory-pr-body.md

@@ -1,0 +1,20 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+:root {
+  color-scheme: dark;
+}
+
+body {
+  background-image:
+    radial-gradient(circle at 50% -10%, rgba(255, 255, 255, 0.08), transparent 42%),
+    linear-gradient(rgba(255, 255, 255, 0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.025) 1px, transparent 1px);
+  background-position: center top, center top, center top;
+  background-size: auto, 48px 48px, 48px 48px;
+}
+
+::selection {
+  background: rgba(255, 255, 255, 0.18);
+}
