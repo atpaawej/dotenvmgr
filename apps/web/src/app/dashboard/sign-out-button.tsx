@@ -1,17 +1,24 @@
 'use client';
 
+import { Loader2, LogOut } from 'lucide-react';
 import { useFormStatus } from 'react-dom';
+import { Button } from '@/components/ui/button';
 
 export function SignOutButton() {
   const { pending } = useFormStatus();
 
   return (
-    <button
-      type="submit"
-      disabled={pending}
-      className="rounded-lg border border-white/10 bg-white/5 px-3 py-1.5 text-xs font-medium text-neutral-300 transition-all duration-200 ease-out hover:border-white/20 hover:bg-white/10 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40 disabled:cursor-not-allowed disabled:opacity-50"
-    >
-      {pending ? 'Signing out…' : 'Sign out'}
-    </button>
+    <Button type="submit" variant="outline" size="sm" disabled={pending}>
+      {pending ? (
+        <Loader2 aria-hidden="true" className="h-3.5 w-3.5 animate-spin" />
+      ) : (
+        <LogOut
+          aria-hidden="true"
+          strokeWidth={1.75}
+          className="h-3.5 w-3.5 transition-transform duration-200 ease-[var(--ease-out)] group-hover:-translate-x-0.5"
+        />
+      )}
+      <span>{pending ? 'Signing out' : 'Sign out'}</span>
+    </Button>
   );
 }

@@ -1,25 +1,10 @@
 import { redirect } from 'next/navigation';
+import { BrandMark } from '@/components/brand-mark';
+import { DashboardMetrics } from '@/components/dashboard/dashboard-metrics';
+import { DashboardWorkspace } from '@/components/dashboard/dashboard-workspace';
 import { signOutAction } from '@/app/actions/auth';
 import { getAdminSession } from '@/auth/session';
 import { SignOutButton } from './sign-out-button';
-
-const cards = [
-  {
-    title: 'Projects',
-    value: '0',
-    description: 'Projects will appear here once the secret pipeline lands.',
-  },
-  {
-    title: 'Environments',
-    value: '3',
-    description: 'Production, dev, and test environments are provisioned per project.',
-  },
-  {
-    title: 'Secrets',
-    value: '0',
-    description: 'Encrypted values only. Plaintext never touches storage.',
-  },
-];
 
 export default async function DashboardPage() {
   const session = await getAdminSession();
@@ -31,31 +16,34 @@ export default async function DashboardPage() {
 
   return (
     <div className="min-h-screen">
-      <header className="border-b border-white/10 bg-neutral-950/80 backdrop-blur-xl">
-        <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-6 py-4">
+      <header className="sticky top-0 z-30 border-b border-white/[0.06] bg-[#08090a]/70 backdrop-blur-xl">
+        <div
+          aria-hidden="true"
+          className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/[0.14] to-transparent"
+        />
+        <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-6 py-3.5">
           <div className="flex items-center gap-3">
-            <span className="flex h-8 w-8 items-center justify-center rounded-lg border border-white/10 bg-white/5">
-              <svg
-                aria-hidden="true"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="1.75"
-                className="h-4 w-4 text-neutral-200"
-              >
-                <rect width="14" height="10" x="5" y="11" rx="2" />
-                <path d="M8 11V7a4 4 0 0 1 8 0v4" />
-                <path d="M12 15v2" />
-              </svg>
-            </span>
-            <span className="text-sm font-semibold tracking-tight">
-              dotenvmgr
-            </span>
+            <BrandMark />
+            <div className="leading-tight">
+              <p className="text-sm font-semibold tracking-tight text-neutral-100">
+                dotenvmgr
+              </p>
+              <p className="hidden text-[0.65rem] text-neutral-600 sm:block">
+                Encrypted environments
+              </p>
+            </div>
           </div>
 
-          <div className="flex items-center gap-4">
-            <span className="hidden text-xs text-neutral-500 sm:inline">
-              Signed in as <span className="text-neutral-300">{username}</span>
+          <div className="flex items-center gap-3">
+            <span className="hidden items-center gap-2 rounded-full border border-white/[0.07] bg-white/[0.03] px-2.5 py-1 text-[0.65rem] font-medium text-neutral-400 sm:flex">
+              <span className="relative flex h-1.5 w-1.5">
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400/60 [animation-duration:2.4s] motion-reduce:animate-none" />
+                <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.8)]" />
+              </span>
+              Encrypted
+            </span>
+            <span className="hidden max-w-40 truncate text-xs text-neutral-500 md:inline">
+              {username}
             </span>
             <form action={signOutAction}>
               <SignOutButton />
@@ -64,12 +52,10 @@ export default async function DashboardPage() {
         </div>
       </header>
 
-      <main className="mx-auto max-w-6xl px-6 py-12">
+      <main className="mx-auto max-w-6xl px-6 py-12 sm:py-16">
         <div className="max-w-2xl">
-          <p className="text-[0.6875rem] font-medium uppercase tracking-[0.2em] text-neutral-500">
-            Dashboard shell
-          </p>
-          <h1 className="mt-2 text-3xl font-semibold tracking-tight text-white">
+          <p className="text-sm font-medium text-neutral-500">Instance overview</p>
+          <h1 className="mt-2 text-3xl font-semibold tracking-[-0.03em] text-white sm:text-4xl">
             Welcome back, {username}
           </h1>
           <p className="mt-3 text-sm leading-6 text-neutral-400">
@@ -78,24 +64,8 @@ export default async function DashboardPage() {
           </p>
         </div>
 
-        <section className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {cards.map((card) => (
-            <article
-              key={card.title}
-              className="rounded-2xl border border-white/10 bg-neutral-900/50 p-6 shadow-xl shadow-black/20"
-            >
-              <p className="text-xs font-medium uppercase tracking-[0.16em] text-neutral-500">
-                {card.title}
-              </p>
-              <p className="mt-3 text-2xl font-semibold tracking-tight text-white">
-                {card.value}
-              </p>
-              <p className="mt-2 text-sm leading-6 text-neutral-500">
-                {card.description}
-              </p>
-            </article>
-          ))}
-        </section>
+        <DashboardMetrics />
+        <DashboardWorkspace />
       </main>
     </div>
   );
